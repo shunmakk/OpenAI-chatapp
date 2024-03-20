@@ -4,6 +4,7 @@ import { IoSendSharp } from "react-icons/io5";
 import { db } from '../../../firebase';
 import { collection, doc, serverTimestamp ,addDoc, query, orderBy,onSnapshot, Timestamp} from 'firebase/firestore';
 import { useAppcontext } from '@/Context/AppContext';
+import OpenAI from 'openai';
 
 type Message = {
     text: string,
@@ -12,6 +13,12 @@ type Message = {
 }
 
 const Chat = () => {
+
+    const openai = new OpenAI({
+        apiKey: process.env.NEXT_PUBLIC_OPENAI_KEY,
+        dangerouslyAllowBrowser: true
+    })
+
 
     const {selectedRoom} = useAppcontext()
 
@@ -52,7 +59,21 @@ const Chat = () => {
         const roomdocRef  = doc(db, "rooms", selectedRoom!);
         const messageCollectionRef = collection(roomdocRef, "messages");
         await addDoc(messageCollectionRef, messageData)
+
+
+        //OpemAIからの返信
+        const gptResponce =  await openai.chat.completions.create({
+            messages: [{role: "user", content: inputMessage}],
+            model: "gpt-3.5-turbo-0125"
+        })
+        const botResponce = gptResponce.choices[0].message.content;
+        await addDoc(messageCollectionRef, {
+            text: botResponce,
+            sender: "bot",
+            createdAt: serverTimestamp()
+        })
     }
+
 
   return (
     <div className='h-full p-4 flex flex-col'>
@@ -60,7 +81,7 @@ const Chat = () => {
         <div className='flex-grow overflow-y-auto mb-4'>
             {messages.map((message,index) => (
                 <div key={index} className={message.sender === "user" ? 'text-right' : 'text-left'}>
-                    <div className={message.sender === "user" ? 'bg-slate-50 inline-block rounded px-4 py-2' : 'bg-green-200 inline-block rounded px-4 py-2'}>
+                    <div className={message.sender === "user" ? 'bg-slate-50 inline-block rounded px-4 py-2 mt-3 mb-3 mr-5' : 'bg-green-200 inline-block rounded px-4 py-2 mt-3 mb-3'}>
                         <p>{message.text}</p>
                     </div>
                 </div>
