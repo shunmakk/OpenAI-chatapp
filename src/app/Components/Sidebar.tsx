@@ -28,7 +28,7 @@ const Sidebar = () => {
                 }))
                 setRooms(newRooms);
             })
-            return unsubscribe();
+            return () => unsubscribe();
         };
 
         fetchRooms();
