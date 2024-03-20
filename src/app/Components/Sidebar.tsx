@@ -3,6 +3,7 @@ import { Timestamp, collection, onSnapshot, orderBy, query, where } from 'fireba
 import React, { useEffect, useState } from 'react'
 import { IoIosLogOut } from "react-icons/io";
 import { db } from '../../../firebase';
+import { useAppcontext } from '@/Context/AppContext';
 
 
 type Room = {
@@ -13,28 +14,37 @@ type Room = {
 
 
 const Sidebar = () => {
+    
+    const {user, userId,setSelectedRoom} = useAppcontext();
 
     const [rooms, setRooms]  = useState<Room[]>([])
 
     useEffect(()=> {
-        const fetchRooms = async () => {
-            const roomCollectionRef = collection(db,  "rooms");
-            const q = query(roomCollectionRef , where("userId", "==","NRhE9Fhy1uf2hXgLYe3dRfuObXV2"),orderBy("createdAt"))
-            const unsubscribe = onSnapshot(q, (snapshot) => {
-                const newRooms:Room[] = snapshot.docs.map((docs) => ({
-                    id: docs.id,
-                    name: docs.data().name,
-                    createdAt:  docs.data().createdAt,
-                }))
-                setRooms(newRooms);
-            })
-            return () => unsubscribe();
-        };
+        if(user){
+            const fetchRooms = async () => {
+                const roomCollectionRef = collection(db,  "rooms");
+                const q = query(roomCollectionRef , where("userId", "==","NRhE9Fhy1uf2hXgLYe3dRfuObXV2"),orderBy("createdAt"))
+                const unsubscribe = onSnapshot(q, (snapshot) => {
+                    const newRooms:Room[] = snapshot.docs.map((docs) => ({
+                        id: docs.id,
+                        name: docs.data().name,
+                        createdAt:  docs.data().createdAt,
+                    }))
+                    setRooms(newRooms);
+                })
+                return () => unsubscribe();
+            };     
+            
+            
+            fetchRooms();
 
-        fetchRooms();
-    
-    },[])
+        }
+       
+    },[userId])
 
+    const selectRoom = (roomId:string) => {
+        setSelectedRoom(roomId)
+    }
 
 
   return (
@@ -46,7 +56,10 @@ const Sidebar = () => {
             </div>
             <ul className='pt-4'>
                 {rooms.map((room) => (
-                   <li key={room.id}  className='cursor-pointer border-b-2  p-4 text-slate-100 hover:bg-blue-800 duration-150'>{room.name}</li> 
+                   <li key={room.id}  
+                   className='cursor-pointer border-b-2  p-4 text-slate-100 hover:bg-blue-800 duration-150'
+                   onClick={() => selectRoom(room.id)}
+                   >{room.name}</li> 
                 ))}
             </ul>
         </div>

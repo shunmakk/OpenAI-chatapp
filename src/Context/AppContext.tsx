@@ -1,5 +1,7 @@
+'use client'
+
 import { User, onAuthStateChanged } from "firebase/auth";
-import { ReactNode, createContext, useEffect, useId, useState } from "react";
+import { ReactNode, createContext, useContext, useEffect, useId, useState } from "react";
 import { auth } from "../../firebase";
 
 type  AppProviderProps = {
@@ -49,4 +51,9 @@ export function AppProvider({children}:AppProviderProps){
             {children}
         </AppContext.Provider>
     )
+}
+
+ {/* コンテキストを各ページで使えるようにする */}
+export function useAppcontext(){
+    return useContext(AppContext);
 }
