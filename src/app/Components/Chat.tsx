@@ -1,4 +1,5 @@
 import React from 'react'
+import { IoSendSharp } from "react-icons/io5";
 
 const Chat = () => {
   return (
@@ -18,6 +19,9 @@ const Chat = () => {
         </div>
         <div className='flex-shrink-0 relative'>
             <input type='text' placeholder='send a message'  className='border-2 rounded w-full pr-10 p-2 focus:outline-none' />
+            <button className='absolute right-5 inset-y-0 flex items-center'>
+                <IoSendSharp/>
+            </button>
         </div>
     </div>
   )
