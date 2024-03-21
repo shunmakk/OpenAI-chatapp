@@ -15,14 +15,18 @@ const defaultContextData = {
     setUser: () => {},
     selectedRoom: null,
     setSelectedRoom: () => {},
+    selectedRoomname: null,
+    setSelectedRoomname: () => {},
 }
 
 type AppContextType = {
-    user: User | null
+    user: User | null ,
     userId: string | null,
     setUser: React.Dispatch<React.SetStateAction<User | null>>
     selectedRoom: string | null,
     setSelectedRoom:  React.Dispatch<React.SetStateAction<string | null>>
+    selectedRoomname: string | null,
+    setSelectedRoomname:  React.Dispatch<React.SetStateAction<string | null>>
 }
 
 //contextAPIを用いてグローバルに管理する
@@ -32,6 +36,7 @@ export function AppProvider({children}:AppProviderProps){
     const [user, setUser] = useState<any | null>(null);
     const [userId, setUserId] = useState<string | null>(null);
     const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
+    const [selectedRoomname, setSelectedRoomname] = useState<string | null>(null);
 
 
     useEffect(() => {
@@ -47,7 +52,7 @@ export function AppProvider({children}:AppProviderProps){
 
 
     return(
-        <AppContext.Provider value={{user, userId, setUser, selectedRoom, setSelectedRoom}}>
+        <AppContext.Provider value={{user, userId, setUser, selectedRoom, setSelectedRoom, selectedRoomname , setSelectedRoomname}}>
             {children}
         </AppContext.Provider>
     )
