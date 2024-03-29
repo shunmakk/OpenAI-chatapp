@@ -4,9 +4,8 @@ import React, { useEffect, useState } from 'react'
 import { IoIosLogOut } from "react-icons/io";
 import { db } from '../../../firebase';
 import { useAppcontext } from '@/Context/AppContext';
-import { signOut } from 'firebase/auth';
 import { auth } from '../../../firebase';
-import { win32 } from 'path';
+
 
 
 type Room = {
